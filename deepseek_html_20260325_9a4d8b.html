@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>বাংলাদেশের বিভাগ, জেলা ও উপজেলা তালিকা | সম্পূর্ণ তথ্য</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #eef2f5;
+      font-family: 'Segoe UI', 'Roboto', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+      color: #1a2c3e;
+    }
+
+    /* container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* header section */
+    .stats-header {
+      background: linear-gradient(135deg, #006a4e, #00875f);
+      color: white;
+      border-radius: 2rem;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .stats-header h1 {
+      font-size: 1.9rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stats-header h1 span {
+      background: #ffcd3c;
+      color: #1e3a2f;
+      font-size: 1.3rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+    }
+
+    .summary-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.2rem;
+      justify-content: space-between;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(2px);
+      border-radius: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .info-card .number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .info-card .label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* filter bar */
+    .filter-bar {
+      background: white;
+      border-radius: 3rem;
+      padding: 0.5rem 1rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .search-box {
+      flex: 2;
+      min-width: 180px;
+      display: flex;
+      align-items: center;
+      background: #f0f2f5;
+      border-radius: 2rem;
+      padding: 0.3rem 1rem;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 0.7rem 0.5rem;
+      font-size: 1rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #e9ecef;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+
+    .btn-active {
+      background: #006a4e;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,106,78,0.3);
+    }
+
+    .btn:hover {
+      background: #cfd9e2;
+      transform: scale(0.97);
+    }
+
+    /* main grid for divisions */
+    .divisions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    /* division card */
+    .division-card {
+      background: white;
+      border-radius: 1.8rem;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+
+    .division-header {
+      background: #f8fafc;
+      padding: 1rem 1.8rem;
+      border-bottom: 2px solid #e2e8f0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      transition: background 0.2s;
+    }
+
+    .division-header:hover {
+      background: #f1f5f9;
+    }
+
+    .division-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .division-badge {
+      background: #006a4e20;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #006a4e;
+    }
+
+    .district-count {
+      background: #334155;
+      color: white;
+      padding: 0.2rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+    }
+
+    .expand-icon {
+      font-size: 1.6rem;
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+
+    /* districts container inside division */
+    .districts-container {
+      padding: 1.2rem 1.8rem;
+      display: none;
+      background: white;
+      border-top: 1px solid #eef2f5;
+    }
+
+    .districts-container.open {
+      display: block;
+    }
+
+    .district-item {
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid #eef2f5;
+      padding-bottom: 1rem;
+    }
+
+    .district-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #0f3b2c;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .upazila-count {
+      background: #e2e8f0;
+      padding: 0.2rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .upazila-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      padding-left: 0.5rem;
+    }
+
+    .upazila-tag {
+      background: #f1f5f9;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      color: #1e293b;
+      transition: 0.1s;
+    }
+
+    .no-match {
+      text-align: center;
+      padding: 3rem;
+      font-size: 1.2rem;
+      color: #5b6e8c;
+      background: white;
+      border-radius: 2rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #5a6874;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 0.8rem;
+      }
+      .division-title {
+        font-size: 1.2rem;
+      }
+      .districts-container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="stats-header">
+    <h1>🇧🇩 বাংলাদেশের প্রশাসনিক কাঠামো <span>বিভাগ, জেলা ও উপজেলা</span></h1>
+    <div class="summary-cards">
+      <div class="info-card"><div class="number" id="totalDivisions">৮</div><div class="label">বিভাগ</div></div>
+      <div class="info-card"><div class="number" id="totalDistricts">৬৪</div><div class="label">জেলা</div></div>
+      <div class="info-card"><div class="number" id="totalUpazilas">৪৯৫</div><div class="label">উপজেলা (সর্বশেষ)</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="অনুসন্ধান করুন (জেলা বা উপজেলা নাম)">
+    </div>
+    <div class="filter-buttons">
+      <button class="btn btn-active" id="showAllBtn">সব বিভাগ</button>
+      <button class="btn" id="expandAllBtn">সব খুলুন</button>
+      <button class="btn" id="collapseAllBtn">সব বন্ধ করুন</button>
+    </div>
+  </div>
+
+  <div id="divisionsContainer" class="divisions-grid"></div>
+  <footer>© তথ্য অনুযায়ী বিভাগ: ৮টি, জেলা: ৬৪টি, উপজেলা: ৪৯৫টি (২০২৬ মার্চ পর্যন্ত হালনাগাদ) </footer>
+</div>
+
+<script>
+  // ----- সম্পূর্ণ ডাটাবেস: বিভাগ -> জেলা -> উপজেলাসমূহ (সর্বশেষ তথ্য + নতুন ৩টি উপজেলা)
+  // ক্রম: রাজশাহী, ঢাকা, চট্টগ্রাম, তারপর বাকি বিভাগ পূর্বের মতো
+  const bangladeshData = [
+    // ১. রাজশাহী বিভাগ (প্রথম সারি)
+    { name: "রাজশাহী", districts: [
+      { name: "রাজশাহী", upazilas: ["রাজশাহী সদর", "গোদাগাড়ী", "তানোর", "বাঘমারা", "বাগমারা", "চারঘাট", "পুঠিয়া", "পবা", "দুর্গাপুর"] },
+      { name: "পাবনা", upazilas: ["পাবনা সদর", "ঈশ্বরদী", "আটঘরিয়া", "বেড়া", "চাটমোহর", "ভাঙ্গুড়া", "সুজানগর", "সাঁথিয়া", "ফরিদপুর", "আমিনপুর"] },
+      { name: "নাটোর", upazilas: ["নাটোর সদর", "বাগাতিপাড়া", "বড়াইগ্রাম", "গুরুদাসপুর", "লালপুর", "নলডাঙ্গা", "সিংড়া"] },
+      { name: "সিরাজগঞ্জ", upazilas: ["সিরাজগঞ্জ সদর", "উল্লাপাড়া", "কাজীপুর", "বেলকুচি", "চৌহালী", "কামারখন্দ", "শাহজাদপুর", "তাড়াশ", "রায়গঞ্জ"] },
+      { name: "বগুড়া", upazilas: ["বগুড়া সদর", "আদমদীঘি", "দুপচাঁচিয়া", "ধুনট", "নন্দীগ্রাম", "শেরপুর", "শিবগঞ্জ", "সোনাতলা", "গাবতলী", "কাহালু"] },
+      { name: "নওগাঁ", upazilas: ["নওগাঁ সদর", "আত্রাই", "ধামইরহাট", "মান্দা", "মহাদেবপুর", "নিয়ামতপুর", "পত্নীতলা", "পোরশা", "সাপাহার", "বদলগাছী", "রাণীনগর"] },
+      { name: "জয়পুরহাট", upazilas: ["জয়পুরহাট সদর", "আক্কেলপুর", "কালাই", "ক্ষেতলাল", "পাঁচবিবি"] },
+      { name: "চাঁপাইনবাবগঞ্জ", upazilas: ["চাঁপাইনবাবগঞ্জ সদর", "গোমস্তাপুর", "নাচোল", "ভোলাহাট", "শিবগঞ্জ"] }
+    ] },
+    // ২. ঢাকা বিভাগ (দ্বিতীয় সারি)
+    { name: "ঢাকা", districts: [
+      { name: "ঢাকা", upazilas: ["ধামরাই", "দোহার", "কেরানীগঞ্জ", "নবাবগঞ্জ", "সাভার", "তেজগাঁও (শহর)", "গুলশান (শহর)", "মিরপুর (শহর)", "মোহাম্মদপুর (শহর)", "উত্তরা (শহর)"] },
+      { name: "গাজীপুর", upazilas: ["গাজীপুর সদর", "কালিয়াকৈর", "কালীগঞ্জ", "শ্রীপুর"] },
+      { name: "মানিকগঞ্জ", upazilas: ["মানিকগঞ্জ সদর", "সিংগাইর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া"] },
+      { name: "মুন্সীগঞ্জ", upazilas: ["মুন্সীগঞ্জ সদর", "টঙ্গিবাড়ী", "লৌহজং", "শ্রীনগর", "সিরাজদিখান", "গজারিয়া"] },
+      { name: "নারায়ণগঞ্জ", upazilas: ["নারায়ণগঞ্জ সদর", "আড়াইহাজার", "বন্দর", "রূপগঞ্জ", "সোনারগাঁও"] },
+      { name: "নরসিংদী", upazilas: ["নরসিংদী সদর", "পলাশ", "শিবপুর", "রায়পুরা", "বেলাবো", "মনোহরদী"] },
+      { name: "কিশোরগঞ্জ", upazilas: ["কিশোরগঞ্জ সদর", "কটিয়াদী", "ইটনা", "করিমগঞ্জ", "তাড়াইল", "পাকুন্দিয়া", "বাজিতপুর", "ভৈরব", "মিঠামইন", "হোসেনপুর", "অষ্টগ্রাম", "কুলিয়ারচর", "নিকলী"] },
+      { name: "টাঙ্গাইল", upazilas: ["টাঙ্গাইল সদর", "কালিহাতী", "ঘাটাইল", "গোপালপুর", "ভূঞাপুর", "ধনবাড়ী", "মির্জাপুর", "নাগরপুর", "সখিপুর", "বাসাইল", "দেলদুয়ার", "মধুপুর"] },
+      { name: "ফরিদপুর", upazilas: ["ফরিদপুর সদর", "আলফাডাঙা", "ভাঙ্গা", "বোয়ালমারী", "নগরকান্দা", "চরভদ্রাসন", "মধুখালী", "সদরপুর", "সালথা"] },
+      { name: "গোপালগঞ্জ", upazilas: ["গোপালগঞ্জ সদর", "কাশিয়ানী", "টুঙ্গিপাড়া", "মুকসুদপুর"] },
+      { name: "মাদারীপুর", upazilas: ["মাদারীপুর সদর", "শিবচর", "কালকিনি", "রাজৈর", "দাশর"] },
+      { name: "শরীয়তপুর", upazilas: ["শরীয়তপুর সদর", "নড়িয়া", "জাজিরা", "ভেদরগঞ্জ", "গোসাইরহাট", "ডামুড্যা"] },
+      { name: "রাজবাড়ী", upazilas: ["রাজবাড়ী সদর", "পাংশা", "বালিয়াকান্দি", "কালুখালী", "গোয়ালন্দ"] }
+    ] },
+    // ৩. চট্টগ্রাম বিভাগ (তৃতীয় সারি)
+    { name: "চট্টগ্রাম", districts: [
+      { name: "কুমিল্লা", upazilas: ["কুমিল্লা আদর্শ সদর", "চান্দিনা", "দাউদকান্দি", "দেবিদ্বার", "তিতাস", "মনোহরগঞ্জ", "মুরাদনগর", "বরুড়া", "ব্রাহ্মণপাড়া", "বুড়িচং", "লাকসাম", "হোমনা", "মেঘনা", "চৌদ্দগ্রাম", "নাঙ্গলকোট"] },
+      { name: "চাঁদপুর", upazilas: ["চাঁদপুর সদর", "মতলব উত্তর", "মতলব দক্ষিণ", "হাইমচর", "ফরিদগঞ্জ", "কচুয়া", "শাহরাস্তি"] },
+      { name: "ব্রাহ্মণবাড়িয়া", upazilas: ["ব্রাহ্মণবাড়িয়া সদর", "আখাউড়া", "কসবা", "নবীনগর", "নাসিরনগর", "সরাইল", "বিজয়নগর", "বাঞ্ছারামপুর"] },
+      { name: "নোয়াখালী", upazilas: ["নোয়াখালী সদর", "সেনবাগ", "কোম্পানীগঞ্জ", "বেগমগঞ্জ", "হাতিয়া", "সুবর্ণচর", "কবিরহাট", "সোনাইমুড়ী"] },
+      { name: "ফেনী", upazilas: ["ফেনী সদর", "দাগনভূঞা", "পরশুরাম", "সোনাগাজী", "ছাগলনাইয়া"] },
+      { name: "লক্ষ্মীপুর", upazilas: ["লক্ষ্মীপুর সদর", "রামগঞ্জ", "রামগতি", "রায়পুর"] },
+      { name: "চট্টগ্রাম", upazilas: ["রাঙ্গুনিয়া", "রাউজান", "বোয়ালখালী", "পটিয়া", "ফটিকছড়ি", "সন্দ্বীপ", "সীতাকুণ্ড", "মীরসরাই", "হাটহাজারী", "আনোয়ারা", "বাঁশখালী", "চন্দনাইশ", "সাতকানিয়া", "লোহাগাড়া", "কর্ণফুলী"] },
+      { name: "কক্সবাজার", upazilas: ["কক্সবাজার সদর", "উখিয়া", "টেকনাফ", "পেকুয়া", "রামু", "চকরিয়া", "মহেশখালী", "কুতুবদিয়া", "ঈদগাঁও"] },
+      { name: "রাঙ্গামাটি", upazilas: ["রাঙ্গামাটি সদর", "বিলাইছড়ি", "জুরাছড়ি", "কাউখালী", "বরকল", "বাঘাইছড়ি", "নানিয়ারচর", "রাজস্থলী", "লংগদু"] },
+      { name: "খাগড়াছড়ি", upazilas: ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মহালছড়ি", "মাটিরাঙ্গা", "রামগড়", "লক্ষ্মীছড়ি", "মানিকছড়ি"] },
+      { name: "বান্দরবান", upazilas: ["বান্দরবান সদর", "আলীকদম", "নাইক্ষ্যংছড়ি", "রুমা", "থানচি", "লামা"] }
+    ] },
+    // ৪. খুলনা বিভাগ
+    { name: "খুলনা", districts: [
+      { name: "খুলনা", upazilas: ["খুলনা সদর", "পাইকগাছা", "ফুলতলা", "ডুমুরিয়া", "তেরখাদা", "দাকোপ", "বটিয়াঘাট", "রূপসা", "দিঘলিয়া", "কয়রা"] },
+      { name: "সাতক্ষীরা", upazilas: ["সাতক্ষীরা সদর", "আশাশুনি", "কলারোয়া", "শ্যামনগর", "কালীগঞ্জ", "তালা", "দেবহাটা"] },
+      { name: "যশোর", upazilas: ["যশোর সদর", "অভয়নগর", "বাঘারপাড়া", "চৌগাছা", "ঝিকরগাছা", "কেশবপুর", "মণিরামপুর", "শার্শা"] },
+      { name: "ঝিনাইদহ", upazilas: ["ঝিনাইদহ সদর", "মহেশপুর", "কালীগঞ্জ", "কোটচাঁদপুর", "শৈলকুপা", "হরিণাকুন্ডু"] },
+      { name: "কুষ্টিয়া", upazilas: ["কুষ্টিয়া সদর", "কুমারখালী", "খোকসা", "মিরপুর", "দৌলতপুর", "ভেড়ামারা"] },
+      { name: "চুয়াডাঙ্গা", upazilas: ["চুয়াডাঙ্গা সদর", "আলমডাঙ্গা", "দামুড়হুদা", "জীবননগর"] },
+      { name: "মেহেরপুর", upazilas: ["মেহেরপুর সদর", "গাংনী", "মুজিবনগর"] },
+      { name: "নড়াইল", upazilas: ["নড়াইল সদর", "কালিয়া", "লোহাগড়া"] },
+      { name: "মাগুরা", upazilas: ["মাগুরা সদর", "মহম্মদপুর", "শালিখা", "শ্রীপুর"] },
+      { name: "বাগেরহাট", upazilas: ["বাগেরহাট সদর", "কচুয়া", "চিতলমারী", "ফকিরহাট", "মোড়েলগঞ্জ", "মোল্লাহাট", "রামপাল", "শরণখোলা"] }
+    ] },
+    // ৫. বরিশাল বিভাগ
+    { name: "বরিশাল", districts: [
+      { name: "বরিশাল", upazilas: ["বরিশাল সদর", "আগৈলঝাড়া", "বাবুগঞ্জ", "বাকেরগঞ্জ", "বানারীপাড়া", "গৌরনদী", "হিজলা", "মেহেন্দিগঞ্জ", "মুলাদী", "উজিরপুর"] },
+      { name: "পটুয়াখালী", upazilas: ["পটুয়াখালী সদর", "কলাপাড়া", "গলাচিপা", "দশমিনা", "বাউফল", "মির্জাগঞ্জ", "রাঙ্গাবালী", "দুমকি"] },
+      { name: "ভোলা", upazilas: ["ভোলা সদর", "বোরহানউদ্দিন", "চরফ্যাশন", "দৌলতখান", "লালমোহন", "তজুমদ্দিন", "মনপুরা"] },
+      { name: "পিরোজপুর", upazilas: ["পিরোজপুর সদর", "ভাণ্ডারিয়া", "নাজিরপুর", "নেছারাবাদ (স্বরূপকাঠি)", "কাউখালী", "মঠবাড়িয়া", "ইন্দুরকানী"] },
+      { name: "বরগুনা", upazilas: ["বরগুনা সদর", "আমতলী", "বামনা", "পাথরঘাটা", "তালতলী", "বেতাগী"] },
+      { name: "ঝালকাঠি", upazilas: ["ঝালকাঠি সদর", "কাঁঠালিয়া", "নলছিটি", "রাজাপুর"] }
+    ] },
+    // ৬. সিলেট বিভাগ
+    { name: "সিলেট", districts: [
+      { name: "সিলেট", upazilas: ["সিলেট সদর", "গোলাপগঞ্জ", "বিয়ানীবাজার", "জৈন্তাপুর", "কানাইঘাট", "ফেঞ্চুগঞ্জ", "বালাগঞ্জ", "গোয়াইনঘাট", "জকিগঞ্জ", "কোম্পানীগঞ্জ", "দক্ষিণ সুরমা", "ওসমানীনগর"] },
+      { name: "মৌলভীবাজার", upazilas: ["মৌলভীবাজার সদর", "কমলগঞ্জ", "শ্রীমঙ্গল", "বড়লেখা", "জুড়ী", "কুলাউড়া", "রাজনগর"] },
+      { name: "হবিগঞ্জ", upazilas: ["হবিগঞ্জ সদর", "আজমিরীগঞ্জ", "বানিয়াচং", "চুনারুঘাট", "কালাউক", "লাখাই", "মাধবপুর", "নবীগঞ্জ", "বাহুবল", "শায়েস্তাগঞ্জ"] },
+      { name: "সুনামগঞ্জ", upazilas: ["সুনামগঞ্জ সদর", "দিরাই", "জগন্নাথপুর", "ছাতক", "দোয়ারাবাজার", "তাহিরপুর", "শাল্লা", "বিশ্বম্ভরপুর", "ধর্মপাশা", "মধ্যনগর"] }
+    ] },
+    // ৭. রংপুর বিভাগ
+    { name: "রংপুর", districts: [
+      { name: "রংপুর", upazilas: ["রংপুর সদর", "গংগাচড়া", "তারাগঞ্জ", "পীরগঞ্জ", "পীরগাছা", "মিঠাপুকুর", "বদরগঞ্জ", "কাউনিয়া"] },
+      { name: "দিনাজপুর", upazilas: ["দিনাজপুর সদর", "বীরগঞ্জ", "কাহারোল", "বোচাগঞ্জ", "পীরগঞ্জ", "ফুলবাড়ী", "পার্বতীপুর", "হাকিমপুর", "ঘোড়াঘাট", "নবাবগঞ্জ", "চিরিরবন্দর", "খানসামা"] },
+      { name: "কুড়িগ্রাম", upazilas: ["কুড়িগ্রাম সদর", "নাগেশ্বরী", "ভূরুঙ্গামারী", "ফুলবাড়ী", "রাজারহাট", "উলিপুর", "চিলমারী", "রৌমারী", "রাজিবপুর"] },
+      { name: "গাইবান্ধা", upazilas: ["গাইবান্ধা সদর", "গোবিন্দগঞ্জ", "পলাশবাড়ী", "সাদুল্লাপুর", "সুন্দরগঞ্জ", "ফুলছড়ি", "শাঘাটা"] },
+      { name: "নীলফামারী", upazilas: ["নীলফামারী সদর", "ডোমার", "জলঢাকা", "কিশোরগঞ্জ", "সৈয়দপুর", "ডিমলা"] },
+      { name: "লালমনিরহাট", upazilas: ["লালমনিরহাট সদর", "আদিতমারী", "কালীগঞ্জ", "হাতীবান্ধা", "পাটগ্রাম"] },
+      { name: "পঞ্চগড়", upazilas: ["পঞ্চগড় সদর", "দেবীগঞ্জ", "বোদা", "আটোয়ারী", "তেঁতুলিয়া"] },
+      { name: "ঠাকুরগাঁও", upazilas: ["ঠাকুরগাঁও সদর", "পীরগঞ্জ", "বালিয়াডাঙ্গী", "রাণীশংকৈল", "হরিপুর"] }
+    ] },
+    // ৮. ময়মনসিংহ বিভাগ
+    { name: "ময়মনসিংহ", districts: [
+      { name: "ময়মনসিংহ", upazilas: ["ময়মনসিংহ সদর", "ত্রিশাল", "গৌরীপুর", "ঈশ্বরগঞ্জ", "মুক্তাগাছা", "ফুলবাড়িয়া", "ভালুকা", "ফুলপুর", "হালুয়াঘাট", "ধোবাউড়া", "নান্দাইল"] },
+      { name: "জামালপুর", upazilas: ["জামালপুর সদর", "মেলান্দহ", "ইসলামপুর", "দেওয়ানগঞ্জ", "বকশীগঞ্জ", "মাদারগঞ্জ", "সরিষাবাড়ী"] },
+      { name: "শেরপুর", upazilas: ["শেরপুর সদর", "নকলা", "নালিতাবাড়ী", "শ্রীবরদী", "ঝিনাইগাতী"] },
+      { name: "নেত্রকোণা", upazilas: ["নেত্রকোণা সদর", "পূর্বধলা", "দুর্গাপুর", "কেন্দুয়া", "আটপাড়া", "মদন", "খালিয়াজুড়ি", "কলমাকান্দা", "বারহাট্টা", "মোহনগঞ্জ"] }
+    ] }
+  ];
+
+  // calculate totals
+  let totalDistricts = 0;
+  let totalUpazilas = 0;
+  bangladeshData.forEach(div => {
+    totalDistricts += div.districts.length;
+    div.districts.forEach(d => totalUpazilas += d.upazilas.length);
+  });
+
+  document.getElementById("totalDivisions").innerText = bangladeshData.length;
+  document.getElementById("totalDistricts").innerText = totalDistricts;
+  document.getElementById("totalUpazilas").innerText = totalUpazilas;
+
+  let activeSearchTerm = "";
+
+  // render function
+  function render() {
+    const container = document.getElementById("divisionsContainer");
+    let html = "";
+    for (let divIdx = 0; divIdx < bangladeshData.length; divIdx++) {
+      const division = bangladeshData[divIdx];
+      let districtHtml = "";
+      let visibleDistrictCount = 0;
+      for (let dIdx = 0; dIdx < division.districts.length; dIdx++) {
+        const district = division.districts[dIdx];
+        let upazilaHtml = "";
+        let filteredUpazilas = district.upazilas;
+        if (activeSearchTerm.trim() !== "") {
+          const term = activeSearchTerm.trim().toLowerCase();
+          const districtMatch = district.name.toLowerCase().includes(term);
+          const upaMatch = district.upazilas.some(upa => upa.toLowerCase().includes(term));
+          if (!districtMatch && !upaMatch) {
+            continue;
+          }
+          if (upaMatch && !districtMatch) {
+            filteredUpazilas = district.upazilas.filter(upa => upa.toLowerCase().includes(term));
+          }
+        }
+        visibleDistrictCount++;
+        const upaList = filteredUpazilas.map(upa => `<span class="upazila-tag">${upa}</span>`).join("");
+        districtHtml += `
+          <div class="district-item">
+            <div class="district-name">
+              📍 ${district.name} 
+              <span class="upazila-count">${filteredUpazilas.length} টি উপজেলা</span>
+            </div>
+            <div class="upazila-list">${upaList || "<span style='font-size:0.8rem; color:gray;'>কোন উপজেলা পাওয়া যায়নি</span>"}</div>
+          </div>
+        `;
+      }
+      if (visibleDistrictCount === 0 && activeSearchTerm !== "") {
+        continue;
+      }
+      html += `
+        <div class="division-card" data-div-index="${divIdx}">
+          <div class="division-header" onclick="toggleDivision(${divIdx})">
+            <div class="division-title">
+              🏛️ ${division.name} বিভাগ
+              <span class="division-badge">${division.districts.length} টি জেলা</span>
+            </div>
+            <div class="expand-icon" id="icon-${divIdx}">▼</div>
+          </div>
+          <div class="districts-container" id="container-${divIdx}">
+            ${districtHtml || "<div class='no-match'>এই বিভাগে অনুসন্ধান মেলেনি</div>"}
+          </div>
+        </div>
+      `;
+    }
+    if (html === "") {
+      container.innerHTML = `<div class="no-match">🔍 কোন বিভাগ/জেলা/উপজেলা খুঁজে পাওয়া যায়নি।</div>`;
+    } else {
+      container.innerHTML = html;
+    }
+    
+    // expansion state management
+    if (window._forceExpandAll === true) {
+      for (let i = 0; i < bangladeshData.length; i++) {
+        const cont = document.getElementById(`container-${i}`);
+        const icon = document.getElementById(`icon-${i}`);
+        if (cont && icon) {
+          cont.classList.add("open");
+          icon.innerHTML = "▲";
+        }
+      }
+    } else if (window._forceCollapseAll === true) {
+      for (let i = 0; i < bangladeshData.length; i++) {
+        const cont = document.getElementById(`container-${i}`);
+        const icon = document.getElementById(`icon-${i}`);
+        if (cont && icon) {
+          cont.classList.remove("open");
+          icon.innerHTML = "▼";
+        }
+      }
+    } else {
+      for (let i = 0; i < bangladeshData.length; i++) {
+        const cont = document.getElementById(`container-${i}`);
+        const icon = document.getElementById(`icon-${i}`);
+        if (cont && icon && !cont.classList.contains("open")) {
+          cont.classList.remove("open");
+          icon.innerHTML = "▼";
+        }
+      }
+    }
+  }
+
+  window.toggleDivision = function(idx) {
+    const container = document.getElementById(`container-${idx}`);
+    const icon = document.getElementById(`icon-${idx}`);
+    if (container.classList.contains("open")) {
+      container.classList.remove("open");
+      icon.innerHTML = "▼";
+    } else {
+      container.classList.add("open");
+      icon.innerHTML = "▲";
+    }
+  };
+
+  function expandAllDivisions() {
+    window._forceExpandAll = true;
+    window._forceCollapseAll = false;
+    for (let i = 0; i < bangladeshData.length; i++) {
+      const cont = document.getElementById(`container-${i}`);
+      const icon = document.getElementById(`icon-${i}`);
+      if (cont) {
+        cont.classList.add("open");
+        if (icon) icon.innerHTML = "▲";
+      }
+    }
+  }
+
+  function collapseAllDivisions() {
+    window._forceExpandAll = false;
+    window._forceCollapseAll = true;
+    for (let i = 0; i < bangladeshData.length; i++) {
+      const cont = document.getElementById(`container-${i}`);
+      const icon = document.getElementById(`icon-${i}`);
+      if (cont) {
+        cont.classList.remove("open");
+        if (icon) icon.innerHTML = "▼";
+      }
+    }
+  }
+
+  function handleSearch() {
+    const searchVal = document.getElementById("searchInput").value;
+    activeSearchTerm = searchVal;
+    window._forceExpandAll = false;
+    window._forceCollapseAll = false;
+    render();
+    if (activeSearchTerm !== "") {
+      for (let i = 0; i < bangladeshData.length; i++) {
+        const cont = document.getElementById(`container-${i}`);
+        const icon = document.getElementById(`icon-${i}`);
+        if (cont) {
+          cont.classList.add("open");
+          if (icon) icon.innerHTML = "▲";
+        }
+      }
+    } else {
+      collapseAllDivisions();
+    }
+  }
+
+  function resetAndShowAll() {
+    document.getElementById("searchInput").value = "";
+    activeSearchTerm = "";
+    window._forceExpandAll = false;
+    window._forceCollapseAll = false;
+    render();
+    collapseAllDivisions();
+    document.getElementById("showAllBtn").classList.add("btn-active");
+    document.getElementById("expandAllBtn").classList.remove("btn-active");
+    document.getElementById("collapseAllBtn").classList.remove("btn-active");
+  }
+
+  function setActiveButton(activeBtn) {
+    [document.getElementById("showAllBtn"), document.getElementById("expandAllBtn"), document.getElementById("collapseAllBtn")].forEach(btn => btn.classList.remove("btn-active"));
+    activeBtn.classList.add("btn-active");
+  }
+
+  document.getElementById("searchInput").addEventListener("input", handleSearch);
+  document.getElementById("showAllBtn").addEventListener("click", () => {
+    resetAndShowAll();
+    setActiveButton(document.getElementById("showAllBtn"));
+  });
+  document.getElementById("expandAllBtn").addEventListener("click", () => {
+    if (activeSearchTerm !== "") document.getElementById("searchInput").value = ""; activeSearchTerm = "";
+    render();
+    expandAllDivisions();
+    setActiveButton(document.getElementById("expandAllBtn"));
+  });
+  document.getElementById("collapseAllBtn").addEventListener("click", () => {
+    if (activeSearchTerm !== "") document.getElementById("searchInput").value = ""; activeSearchTerm = "";
+    render();
+    collapseAllDivisions();
+    setActiveButton(document.getElementById("collapseAllBtn"));
+  });
+
+  render();
+  collapseAllDivisions();
+  setActiveButton(document.getElementById("showAllBtn"));
+</script>
+</body>
+</html>
